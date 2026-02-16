@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { User } from "../schema/authSchema";
 import { generateToken } from "../utils/jwt";
 import crypto from "crypto";
+import { sendEmail } from "../utils/mailer";
 
 /**
  * Registers a new user
@@ -174,6 +175,11 @@ export const forgetPassword = async (req: Request, res: Response) => {
     console.log(resetLink);
 
     // TODO: send email to user with reset link (npdemailer or any email service can be used)
+    await sendEmail(
+      user.email,
+      "Password Reset Request",
+      `You requested a password reset. Click the link to reset your password: ${resetLink}`
+    );
     console.log("Reset link generated:", resetLink);
 
     res.json({
