@@ -14,6 +14,35 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  
+      Profile:
+      type: object
+      properties:
+        _id:
+          type: string
+        fullname:
+          type: string
+        age:
+          type: integer
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+        address:
+          type: string
+        contact:
+          type: string
+        userId:
+          type: string
+      example:
+        _id: "65f123abc456"
+        fullname: "Moin Shaikh"
+        age: 22
+        bio: "Full stack developer"
+        avatarUrl: "https://example.com/avatar.jpg"
+        address: "Mumbai, India"
+        contact: "+919876543210"
+        userId: "65fuser123"
 
 paths:
   /api/auth/register:
@@ -125,3 +154,124 @@ paths:
           description: Invalid or expired token
         "500":
           description: Internal server error
+ 
+  /api/auth/logout:
+    post:
+      summary: Logout a user
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logout successful
+        "500":
+          description: Internal server error
+
+  /api/profile:
+    post:
+      summary: Create Profile
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                age:
+                  type: integer
+                bio:
+                  type: string
+                avatarUrl:
+                  type: string
+                address:
+                  type: string
+                contact:
+                  type: string
+      responses:
+        201:
+          description: Profile created successfully
+        400:
+          description: Profile already exists
+        500:
+          description: Server error
+
+    get:
+      summary: Get Logged-in User Profile
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      responses:
+        200:
+          description: Profile fetched successfully
+        404:
+          description: Profile not found
+        500:
+          description: Server error
+
+    put:
+      summary: Update Logged-in User Profile
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                age:
+                  type: integer
+                bio:
+                  type: string
+                avatarUrl:
+                  type: string
+                address:
+                  type: string
+                contact:
+                  type: string
+      responses:
+        200:
+          description: Profile updated successfully
+        404:
+          description: Profile not found
+        500:
+          description: Server error
+
+    delete:
+      summary: Delete Logged-in User Profile
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      responses:
+        200:
+          description: Profile deleted successfully
+        404:
+          description: Profile not found
+        500:
+          description: Server error
+
+  /api/profile/all:
+    get:
+      summary: Get All Profiles (Admin)
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      responses:
+        200:
+          description: Profiles fetched successfully
+        500:
+          description: Server error
