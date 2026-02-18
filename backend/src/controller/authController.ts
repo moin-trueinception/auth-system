@@ -105,13 +105,14 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const token = generateToken(user._id.toString());
+    const token = generateToken(user._id.toString(), user.role);
 
     res.json({
       success: true,
       message: "Login successful",
       user: user._id,
       email: user.email,
+      role: user.role,
       token,
     });
   } catch (error) {

@@ -5,6 +5,7 @@ export interface IUser extends Document{
     password:string;
     resetPasswordToken?: string ;
     resetPasswordExpiry?: Date ;
+    role: "user" | "admin";
 }
 
 const userSchema = new Schema<IUser>({
@@ -24,6 +25,11 @@ const userSchema = new Schema<IUser>({
     },
     resetPasswordExpiry:{
         type:Date
+    },
+    role:{
+        type:String,
+        enum:["user","admin"],
+        default:"user"
     }
 });
 
