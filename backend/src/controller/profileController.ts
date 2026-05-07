@@ -1,5 +1,6 @@
 import profile from "../schema/profileSchema";
-import { Request,Response } from "express";
+import { Request, Response } from "express";
+import mongoose from "mongoose";
 
 
 export const createProfile = async (req: Request, res: Response) => {
@@ -34,6 +35,17 @@ export const createProfile = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error(error);
+    if (error instanceof mongoose.Error.ValidationError) {
+      const messages = Object.values(error.errors).map((e) => e.message).join(", ");
+      return res.status(400).json({ success: false, message: messages });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(400).json({ success: false, message: "Invalid data" });
+    }
+    const err = error as NodeJS.ErrnoException & { code?: number };
+    if (err.code === 11000) {
+      return res.status(409).json({ success: false, message: "Profile already exists" });
+    }
     return res.status(500).json({
       success: false,
       message: "Something went wrong"
@@ -62,7 +74,7 @@ export const getProfile = async (req: Request, res: Response) => {
       success: false,
       message: "Something went wrong"
     });
-    }
+  }
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
@@ -90,6 +102,13 @@ export const updateProfile = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
+    if (error instanceof mongoose.Error.ValidationError) {
+      const messages = Object.values(error.errors).map((e) => e.message).join(", ");
+      return res.status(400).json({ success: false, message: messages });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(400).json({ success: false, message: "Invalid data" });
+    }
     return res.status(500).json({
       success: false,
       message: "Something went wrong"
@@ -107,6 +126,7 @@ export const deleteProfile = async (req: Request, res: Response) => {
         message: "Profile not found"
       });
     }
+
     return res.status(200).json({
       success: true,
       message: "Profile deleted successfully"
